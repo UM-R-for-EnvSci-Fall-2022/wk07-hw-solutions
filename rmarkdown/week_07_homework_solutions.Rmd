@@ -1,0 +1,120 @@
+---
+title: "Week 7 Homework"
+author: "Jose Luis Rodriguez Gil"
+date: "25/10/2022"
+output: 
+  html_document:
+    keep_md: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r loading_packages}
+
+library(tidyverse)
+library(janitor)
+library(here)
+
+library(palmerpenguins)
+
+library(ggridges)
+library(viridis)
+
+```
+
+# Data
+
+```{r}
+
+chll_data_original <- read_csv(here("data", "chlorophyll_a.csv"))
+
+chll_data_original
+
+```
+
+# Data processing
+
+```{r}
+
+chll_data <- chll_data_original %>% 
+  clean_names() %>% 
+  filter(sample_depth_m == 0)
+
+chll_data
+
+```
+
+
+# Plot
+
+
+```{r}
+
+chll_figure <- chll_data %>% 
+  ggplot() +
+  geom_density_ridges(aes(x = chlorophyll_concentration_ug_l, y = lake_name, fill = lake_name), alpha = 0.5) +
+  geom_vline(aes(xintercept = 100), colour = "grey50", linetype = "dashed") +
+  annotate(geom = "text",
+           label = "Threshold",
+           x = 230,
+           y = 6.4) +
+    annotate(geom = "curve",
+           x = 200, xend = 110, y = 6.2, yend = 5.6,
+           arrow = arrow(length = unit(1, "mm")),
+           curvature = -0.3) +
+  scale_y_discrete(expand = expansion(mult = c(0.2, 0.6))) +
+  scale_fill_viridis(discrete = TRUE) +
+  theme_bw() +
+  labs(title = "FortWhyte Alive lakes",
+       subtitle = "Chlorophyll a concentrations in surface waters (Depth = 0m)",
+       x = expression(Concentration~(mu*g~.~L^{-1})),
+       y = "Lake") +
+  theme(legend.position = "bottom",
+        legend.title = element_blank())
+
+chll_figure
+
+```
+
+
+
+```{r}
+
+ggsave(here("figures/figures_to_replicate/chlorophyll_figure.png"), chll_figure, width = 190, height = 140, units = "mm")
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
